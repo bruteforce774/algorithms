@@ -1,8 +1,8 @@
 #pragma once
 
-// function prototype for insertionSort
+// function prototype for insertion_sort
 void insertion_sort(int arr[], int n);
 
 void insertion_sort(double arr[], int n) {
-	// implementation for insertionSort
+	// implementation for insertion_sort
 }
