@@ -1,0 +1,95 @@
+GDB Quick Reference for Debugging Insertion Sort
+================================================
+
+COMPILING WITH DEBUG SYMBOLS
+-----------------------------
+g++ -g -o main main.cpp
+
+STARTING GDB
+------------
+gdb ./main
+
+SETTING BREAKPOINTS
+-------------------
+break insertion_sort          # Break at function entry
+break utils.h:7               # Break at specific line number
+break utils.h:11              # Break at while loop condition
+info breakpoints              # List all breakpoints
+delete 1                      # Delete breakpoint #1
+clear utils.h:7               # Clear breakpoint at line
+
+RUNNING THE PROGRAM
+-------------------
+run                           # Start program (shorthand: r)
+continue                      # Continue to next breakpoint (shorthand: c)
+quit                          # Exit gdb (shorthand: q)
+
+STEPPING THROUGH CODE
+---------------------
+next                          # Execute next line, step over functions (shorthand: n)
+step                          # Step into functions (shorthand: s)
+finish                        # Run until current function returns
+until                         # Run until line number greater than current
+
+INSPECTING VARIABLES
+--------------------
+print i                       # Print value of variable i (shorthand: p i)
+print key                     # Print value of key
+print arr[i]                  # Print specific array element
+print arr[0]@6                # Print first 6 elements of array
+print j >= 0 && arr[j] > key  # Evaluate expressions
+display i                     # Auto-print i after each step
+undisplay 1                   # Stop auto-displaying variable #1
+info locals                   # Show all local variables
+info args                     # Show function arguments
+
+VIEWING CODE
+------------
+list                          # Show source code around current line (shorthand: l)
+list insertion_sort           # Show code for specific function
+list utils.h:7                # Show code at specific line
+where                         # Show current location in code
+backtrace                     # Show call stack (shorthand: bt)
+
+WATCHING MEMORY
+---------------
+watch arr[0]                  # Break when arr[0] changes
+watch j                       # Break when j changes
+info watchpoints              # List all watchpoints
+
+EXAMPLE DEBUGGING SESSION FOR INSERTION SORT
+---------------------------------------------
+$ gdb ./main
+(gdb) break insertion_sort
+(gdb) run
+(gdb) print arr[0]@6          # See initial array: {5, 4, 2, 6, 1, 3}
+(gdb) next                    # Step to for loop
+(gdb) print i                 # Should be 1
+(gdb) next                    # Step to key = arr[i]
+(gdb) print key               # Should be 4
+(gdb) next                    # Step to j = i - 1
+(gdb) print j                 # Should be 0
+(gdb) next                    # Step to while condition
+(gdb) print arr[j] > key      # See if condition is true (5 > 4)
+(gdb) next                    # Execute arr[j+1] = arr[j]
+(gdb) print arr[0]@6          # Watch array change to {5, 5, 2, 6, 1, 3}
+(gdb) next                    # j = j - 1
+(gdb) print j                 # Should be -1
+(gdb) next                    # Check while condition again (false now)
+(gdb) next                    # Execute arr[j+1] = key
+(gdb) print arr[0]@6          # Array now {4, 5, 2, 6, 1, 3}
+(gdb) continue                # Continue to end
+
+USEFUL TIPS
+-----------
+- Press Enter to repeat the last command
+- Use Tab for auto-completion
+- Use Ctrl+C to interrupt a running program
+- Use "display arr[0]@6" to automatically show array after each step
+- Set breakpoint at line 11 (while loop) to watch each comparison
+
+COMMON ISSUES
+-------------
+- If you see "No symbol table", recompile with -g flag
+- If breakpoint doesn't hit, check function/file names are correct
+- If variables show <optimized out>, compile with -O0 flag: g++ -g -O0 -o main main.cpp
